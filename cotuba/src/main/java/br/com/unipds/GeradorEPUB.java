@@ -1,5 +1,7 @@
 package br.com.unipds;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.GuideReference;
@@ -16,9 +18,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-public class GeradorEPUB {
+@FormatoEbookQualifier(FormatoEbook.EPUB)
+@ApplicationScoped
+public class GeradorEPUB implements GeradorEbook {
 
-    public void gerarEPUB(Ebook ebook) {
+    public void gerar(Ebook ebook) {
         List<Capitulo> capitulos = ebook.getCapitulo();
         Path arquivoSaida = ebook.getArquivoSaida();
 

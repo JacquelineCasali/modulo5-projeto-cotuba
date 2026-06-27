@@ -6,7 +6,7 @@ Ele é projetado para ser simples, rápido e executável em qualquer ambiente co
 
 ## 🛠 Tecnologias Utilizadas
 
-* **Linguagem:** Java 25
+* **Linguagem:** Java 17
 * **Gerenciador de Dependências:** Maven
 * **Empacotamento:** Maven Shade Plugin (Geração do *Fat JAR*)
 * **Bibliotecas Principais:**

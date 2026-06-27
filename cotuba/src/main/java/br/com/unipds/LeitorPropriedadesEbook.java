@@ -1,44 +1,7 @@
 package br.com.unipds;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
 
-public class LeitorPropriedadesEbook {
-
-    public void ler(Path diretorioMD, Ebook ebook) {
-        Path arquivoPropriedades = diretorioMD.resolve("ebook.properties");
-        if (!Files.exists(arquivoPropriedades)) {
-            throw new IllegalStateException("Arquivo ebook.properties não encontrada");
-        }
-        Properties properties = new Properties();
-        try (Reader reader = Files.newBufferedReader(arquivoPropriedades, StandardCharsets.UTF_8)) {
-            properties.load(reader);
-        } catch (IOException ex) {
-            throw new IllegalStateException("Erro ao ler arquivo " + arquivoPropriedades, ex);
-        }
-
-        String propriedadeTitulo = "cotuba.ebook.titulo";
-        String titulo = properties.getProperty(propriedadeTitulo);
-        validarPropriedade(titulo, propriedadeTitulo);
-
-
-        String propriedadeAutor = "cotuba.ebook.autor";
-
-        String autor = properties.getProperty(propriedadeAutor);
-        validarPropriedade(autor, propriedadeAutor);
-
-        ebook.setTitulo(titulo);
-        ebook.setAutor(autor);
-    }
-
-    private void validarPropriedade(String valor, String propriedade) {
-        if (valor == null || valor.isBlank()) {
-            throw new IllegalArgumentException("Propriedade invalida:" + propriedade);
-        }
-
-    }
+public interface LeitorPropriedadesEbook {
+    void ler(Path diretorioMD, Ebook ebook);
 }

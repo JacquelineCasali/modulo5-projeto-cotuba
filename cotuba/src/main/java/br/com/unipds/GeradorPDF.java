@@ -10,14 +10,17 @@ import com.itextpdf.layout.element.AreaBreak;
 import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.AreaBreakType;
+import jakarta.enterprise.context.ApplicationScoped;
+
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+@FormatoEbookQualifier(FormatoEbook.PDF)
+@ApplicationScoped
+public class GeradorPDF implements GeradorEbook {
 
-public class GeradorPDF {
-
-    public void gerarPDF(Ebook ebook) {
+    public void gerar(Ebook ebook) {
 
         List<Capitulo> capitulos =ebook.getCapitulo();
         Path arquivoSaida= ebook.getArquivoSaida();
