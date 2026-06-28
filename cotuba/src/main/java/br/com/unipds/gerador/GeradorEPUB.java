@@ -1,5 +1,9 @@
-package br.com.unipds;
+package br.com.unipds.gerador;
 
+import br.com.unipds.Capitulo;
+import br.com.unipds.ebook.Ebook;
+import br.com.unipds.ebook.FormatoEbook;
+import br.com.unipds.ebook.FormatoEbookQualifier;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import nl.siegmann.epublib.domain.Author;
@@ -23,22 +27,22 @@ import java.util.List;
 public class GeradorEPUB implements GeradorEbook {
 
     public void gerar(Ebook ebook) {
-        List<Capitulo> capitulos = ebook.getCapitulo();
-        Path arquivoSaida = ebook.getArquivoSaida();
+        List<Capitulo> capitulos = ebook.caitulo();
+        Path arquivoSaida = ebook.arquivoSaida();
 
         try {
             var epub = new Book();
 
 
-            epub.getMetadata().addTitle(ebook.getTitulo());
-            epub.getMetadata().addAuthor(new Author(ebook.getAutor()));
+            epub.getMetadata().addTitle(ebook.titulo());
+            epub.getMetadata().addAuthor(new Author(ebook.autor()));
 
             boolean[] ehPrimeiroCapitulo = {true};
 
 
             capitulos.forEach(capitulo -> {
-                String html = capitulo.getHtml();
-                String tituloCapitulo = capitulo.getTitulo();
+                String html = capitulo.html();
+                String tituloCapitulo = capitulo.titulo();
                 try {
                     StringWriter sw = new StringWriter();
                     XMLStreamWriter writer = XMLOutputFactory.newInstance().createXMLStreamWriter(sw);
@@ -46,7 +50,7 @@ public class GeradorEPUB implements GeradorEbook {
                     writer.writeDefaultNamespace("http://www.w3.org/1999/xhtml");
                     writer.writeStartElement("head");
                     writer.writeStartElement("title");
-                    writer.writeCharacters(ebook.getTitulo());
+                    writer.writeCharacters(ebook.titulo());
                     writer.writeEndElement();
                     writer.writeEndElement();
 
@@ -59,7 +63,7 @@ public class GeradorEPUB implements GeradorEbook {
                     writer.writeEndElement();
                     writer.close();
                     var chapter = new Resource(sw.toString().getBytes(), MediatypeService.XHTML);
-                    epub.addSection(capitulo.getTitulo(), chapter);
+                    epub.addSection(capitulo.titulo(), chapter);
 
                     if (ehPrimeiroCapitulo[0]) {
                         epub.getGuide().addReference(new GuideReference(chapter, "text", "Start Reading"));
@@ -67,7 +71,7 @@ public class GeradorEPUB implements GeradorEbook {
                     }
 
                 }catch (XMLStreamException ex){
-                    throw new IllegalStateException("Erro ao criar capitulo do epub: " +capitulo.getTitulo() ,ex);
+                    throw new IllegalStateException("Erro ao criar capitulo do epub: " +capitulo.titulo() ,ex);
                 }
             });
 

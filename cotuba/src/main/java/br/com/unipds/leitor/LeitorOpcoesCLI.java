@@ -1,5 +1,7 @@
-package br.com.unipds;
+package br.com.unipds.leitor;
 
+import br.com.unipds.ParametrosCotuba;
+import br.com.unipds.ebook.FormatoEbook;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -49,7 +51,7 @@ public class LeitorOpcoesCLI {
             Path arquivoSaida;
             boolean modoVerboso = true;
 
-            var parametrosCotuba = new ParametrosCotuba();
+
             String nomeDoDiretorioDosMD = cmd.getOptionValue("dir");
 
             if (nomeDoDiretorioDosMD != null) {
@@ -90,13 +92,7 @@ public class LeitorOpcoesCLI {
 
             modoVerboso = cmd.hasOption("verbose");
 
-            parametrosCotuba.setDiretorioMD(diretorioMD);
-            parametrosCotuba.setArquivoSaida(arquivoSaida);
-            parametrosCotuba.setFormato(formato);
-            parametrosCotuba.setModoVerboso(modoVerboso);
-
-
-            return parametrosCotuba;
+           return  new ParametrosCotuba(diretorioMD,formato,arquivoSaida,modoVerboso);
         } catch (Exception ex) {
             throw new IllegalStateException(ex);
         }

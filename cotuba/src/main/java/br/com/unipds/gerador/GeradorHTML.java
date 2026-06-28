@@ -1,5 +1,9 @@
-package br.com.unipds;
+package br.com.unipds.gerador;
 
+import br.com.unipds.Capitulo;
+import br.com.unipds.ebook.Ebook;
+import br.com.unipds.ebook.FormatoEbook;
+import br.com.unipds.ebook.FormatoEbookQualifier;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.io.IOException;
@@ -15,12 +19,12 @@ import java.util.stream.Collectors;
 public class GeradorHTML implements GeradorEbook {
     @Override
     public void gerar(Ebook ebook) {
-        Path arquivoSaida = ebook.getArquivoSaida();
+        Path arquivoSaida = ebook.arquivoSaida();
         try {
             Path diretorioHTML = Files.createDirectory(arquivoSaida);
             int i = 1;
             Map<Capitulo,Path> arquivoHTMLDoCapitulo= new LinkedHashMap<>();
-            for (Capitulo capitulo : ebook.getCapitulo()) {
+            for (Capitulo capitulo : ebook.caitulo()) {
                 String nomeArquivoHTML = obterNomeArquivoHTML(i, capitulo);
                 Path arquivoHTML = diretorioHTML.resolve(nomeArquivoHTML);
                 arquivoHTMLDoCapitulo.put(capitulo,arquivoHTML);
@@ -51,20 +55,20 @@ public class GeradorHTML implements GeradorEbook {
                 </html>
                                 
                                 
-                """.formatted(capitulo.getTitulo(),capitulo.getHtml());
+                """.formatted(capitulo.titulo(),capitulo.html());
 Files.writeString(arquivoHTML,html, StandardCharsets.UTF_8);
 
     }
     private void escreveSumario(Ebook ebook, Path diretorioHTML, Map<Capitulo, Path> arquivoHTMLDoCapitulo) throws IOException {
       //collect(Collectors.joining junta tudo em uma string so
 
-       String itensSumariohtml=ebook.getCapitulo().stream().map(capitulo ->
+       String itensSumariohtml=ebook.caitulo().stream().map(capitulo ->
                """
                <li>
                <a href="%s">%s</a>
                
                
-               </li>""".formatted(arquivoHTMLDoCapitulo.get(capitulo).getFileName(),capitulo.getTitulo())
+               </li>""".formatted(arquivoHTMLDoCapitulo.get(capitulo).getFileName(),capitulo.titulo())
        ).collect(Collectors.joining());
 
 
@@ -91,12 +95,12 @@ Files.writeString(arquivoHTML,html, StandardCharsets.UTF_8);
                 </html>
                                 
                                 
-                """.formatted(ebook.getTitulo(),ebook.getTitulo(),ebook.getAutor(),itensSumariohtml);
+                """.formatted(ebook.titulo(),ebook.titulo(),ebook.autor(),itensSumariohtml);
         Files.writeString(diretorioHTML.resolve("index.html"),sumarioHTML, StandardCharsets.UTF_8);
 
     }
     private String obterNomeArquivoHTML(int i, Capitulo capitulo) {
-        String tituloLimpo = capitulo.getTitulo().toLowerCase().replaceAll("\\W", "");
+        String tituloLimpo = capitulo.titulo().toLowerCase().replaceAll("\\W", "");
         return "%02d-%s.html".formatted(i, tituloLimpo);
     }
 }

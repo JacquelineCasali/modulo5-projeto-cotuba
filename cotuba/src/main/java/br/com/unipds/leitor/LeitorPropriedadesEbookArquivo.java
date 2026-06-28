@@ -1,5 +1,7 @@
-package br.com.unipds;
+package br.com.unipds.leitor;
 
+import br.com.unipds.ebook.EbookBuilder;
+import br.com.unipds.ebook.PropriedadesEbook;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.io.IOException;
@@ -13,7 +15,7 @@ import java.util.Properties;
 public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
 
     @Override
-    public void ler(Path diretorioMD, Ebook ebook) {
+    public PropriedadesEbook ler(Path diretorioMD) {
         Path arquivoPropriedades = diretorioMD.resolve("ebook.properties");
         if (!Files.exists(arquivoPropriedades)) {
             throw new IllegalStateException("Arquivo ebook.properties não encontrada");
@@ -35,8 +37,7 @@ public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
         String autor = properties.getProperty(propriedadeAutor);
         validarPropriedade(autor, propriedadeAutor);
 
-        ebook.setTitulo(titulo);
-        ebook.setAutor(autor);
+       return  new PropriedadesEbook(titulo,autor);
     }
 
     private void validarPropriedade(String valor, String propriedade) {

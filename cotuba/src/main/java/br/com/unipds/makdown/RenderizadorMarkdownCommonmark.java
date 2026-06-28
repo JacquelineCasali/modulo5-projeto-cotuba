@@ -1,4 +1,7 @@
-package br.com.unipds;
+package br.com.unipds.makdown;
+
+import br.com.unipds.Capitulo;
+import br.com.unipds.CapituloBuilder;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.commonmark.node.AbstractVisitor;
@@ -14,27 +17,27 @@ import java.util.List;
 public class RenderizadorMarkdownCommonmark implements RenderizadorMarkdown {
 
 
-
-
-
     @Override
-    public void renderizar(List<Capitulo> capitulos) {
+    public List<Capitulo> renderizar(List<Makdown> makdowns) {
 
 
-        capitulos.forEach(capitulo -> {
+        return makdowns.stream().map(makdown -> {
+
+            var capituloBuilder = CapituloBuilder.builder();
+            capituloBuilder.makdown(makdown);
             Parser parser = Parser.builder().build();
             Node document = null;
             try {
 
-                String markdow = capitulo.getMarkdown();
-                document = parser.parse(markdow);
+
+                document = parser.parse(makdown.conteudo());
                 document.accept(new AbstractVisitor() {
                     @Override
                     public void visit(Heading heading) {
                         if (heading.getLevel() == 1) {
                             // capítulo
                             String tituloDoCapitulo = ((Text) heading.getFirstChild()).getLiteral();
-                            capitulo.setTitulo(tituloDoCapitulo);
+                            capituloBuilder.titulo(tituloDoCapitulo);
                         } else if (heading.getLevel() == 2) {
                             // seção
                         } else if (heading.getLevel() == 3) {
@@ -44,18 +47,19 @@ public class RenderizadorMarkdownCommonmark implements RenderizadorMarkdown {
 
                 });
             } catch (Exception ex) {
-                throw new IllegalStateException("Erro ao fazer parse do arquivo " + capitulo.getArquivoMardown(), ex);
+                throw new IllegalStateException("Erro ao fazer parse do arquivo " + makdown.arquivo(), ex);
             }
 
             try {
                 HtmlRenderer renderer = HtmlRenderer.builder().build();
                 String html = renderer.render(document);
-                capitulo.setHtml(html);
+                capituloBuilder.html(html);
 
             } catch (Exception ex) {
-                throw new IllegalStateException("Erro ao renderizar para HTML o arquivo " + capitulo.getArquivoMardown(), ex);
+                throw new IllegalStateException("Erro ao renderizar para HTML o arquivo " + makdown.arquivo(), ex);
             }
-        });
+            return capituloBuilder.build();
+        }).toList();
 
 
     }

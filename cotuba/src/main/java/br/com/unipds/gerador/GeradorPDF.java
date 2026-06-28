@@ -1,5 +1,9 @@
-package br.com.unipds;
+package br.com.unipds.gerador;
 
+import br.com.unipds.Capitulo;
+import br.com.unipds.ebook.Ebook;
+import br.com.unipds.ebook.FormatoEbook;
+import br.com.unipds.ebook.FormatoEbookQualifier;
 import com.itextpdf.html2pdf.HtmlConverter;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfOutline;
@@ -22,20 +26,20 @@ public class GeradorPDF implements GeradorEbook {
 
     public void gerar(Ebook ebook) {
 
-        List<Capitulo> capitulos =ebook.getCapitulo();
-        Path arquivoSaida= ebook.getArquivoSaida();
+        List<Capitulo> capitulos =ebook.caitulo();
+        Path arquivoSaida= ebook.arquivoSaida();
 
         try (var writer = new PdfWriter(Files.newOutputStream(arquivoSaida));
              var pdf = new PdfDocument(writer);
              var pdfDocument = new Document(pdf)) {
 
 
-            pdf.getDocumentInfo().setTitle(ebook.getTitulo());
-            pdf.getDocumentInfo().setAuthor(ebook.getAutor());
+            pdf.getDocumentInfo().setTitle(ebook.titulo());
+            pdf.getDocumentInfo().setAuthor(ebook.autor());
 
             capitulos.forEach(capitulo -> {
 
-                String html = capitulo.getHtml();
+                String html = capitulo.html();
                 List<IElement> convertToElements = HtmlConverter.convertToElements(html);
 
 
@@ -49,7 +53,7 @@ public class GeradorPDF implements GeradorEbook {
                 }
 
                 // TODO: usar título do capítulo
-                PdfOutline chapterOutline = rootOutline.addOutline(capitulo.getTitulo());
+                PdfOutline chapterOutline = rootOutline.addOutline(capitulo.titulo());
                 chapterOutline.addDestination(PdfExplicitDestination.createFit(pdf.getLastPage()));
 
                 for (IElement element : convertToElements) {

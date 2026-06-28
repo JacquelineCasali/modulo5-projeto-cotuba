@@ -1,4 +1,4 @@
-package br.com.unipds;
+package br.com.unipds.ebook;
 
 import jakarta.enterprise.util.AnnotationLiteral;
 

@@ -1,4 +1,5 @@
-package br.com.unipds;
+package br.com.unipds.makdown;
+
 
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -14,7 +15,7 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class RepositorioMarkdownsDiretorio implements RepositorioMarkdowns {
 
-    public List<Capitulo> buscar(Path diretorioMD){
+    public List<Makdown> buscar(Path diretorioMD) {
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher("glob:**/*.md");
         try (Stream<Path> streamMDs = Files.list(diretorioMD)) {
             List<Path> arquivosMD = streamMDs
@@ -24,17 +25,13 @@ public class RepositorioMarkdownsDiretorio implements RepositorioMarkdowns {
             if (arquivosMD.isEmpty()) {
                 throw new IllegalStateException("Não foram encontrados capítulos (arquivos .md) no diretório: " + diretorioMD.toAbsolutePath());
             }
-            return arquivosMD.stream().map(arquivoMD->{
-             try{
-                var capitulo = new Capitulo();
-
-                String markdow = Files.readString(arquivoMD);
-                capitulo.setMarkdown(markdow);
-                capitulo.setArquivoMardown(arquivoMD);
-                return capitulo;
-             } catch (IOException ex) {
-                 throw new IllegalStateException("Erro ao ler arquivo " + arquivoMD, ex);
-             }
+            return arquivosMD.stream().map(arquivoMD -> {
+                try {
+                    String conteudo = Files.readString(arquivoMD);
+                    return new Makdown(conteudo, arquivoMD);
+                } catch (IOException ex) {
+                    throw new IllegalStateException("Erro ao ler arquivo " + arquivoMD, ex);
+                }
 
             }).toList();
 
