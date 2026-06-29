@@ -5,13 +5,11 @@ import br.com.unipds.cotuba.domain.Capitulo;
 import br.com.unipds.cotuba.domain.EbookBuilder;
 import br.com.unipds.cotuba.domain.Makdown;
 import br.com.unipds.cotuba.dto.ParametrosCotuba;
+import br.com.unipds.cotuba.plugin.CotubaPlugin;
 import br.com.unipds.cotuba.ports.in.CotubaUseCase;
 import br.com.unipds.cotuba.support.FormatoEbookFilter;
-
-
 import br.com.unipds.cotuba.ports.out.GeradorEbook;
 import br.com.unipds.cotuba.ports.out.LeitorPropriedadesEbook;
-
 import br.com.unipds.cotuba.ports.out.RenderizadorMarkdown;
 import br.com.unipds.cotuba.ports.out.RepositorioMarkdowns;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -22,6 +20,8 @@ import org.jmolecules.ddd.annotation.Service;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.ServiceLoader;
+
 @Service
 @ApplicationScoped
 public class CotubaService implements CotubaUseCase {
@@ -53,15 +53,18 @@ public class CotubaService implements CotubaUseCase {
         List<Capitulo> capitulos = renderizadorMarkdown.renderizar(markdowns);
         var propriedadesEbook = leitorPropriedadesEbook.ler(diretorioDosMD);
         var ebook = EbookBuilder.builder()
-        .capitulos(capitulos)
-        .formato(parametrosCotuba.formato())
-        .titulo(propriedadesEbook.titulo())
-        .autor(propriedadesEbook.autor())
+                .capitulos(capitulos)
+                .formato(parametrosCotuba.formato())
+                .titulo(propriedadesEbook.titulo())
+                .autor(propriedadesEbook.autor())
                 .build();
 
         GeradorEbook geradorEbook = geradoresEbook.select(FormatoEbookFilter.of(ebook.formato())).get();
+        geradorEbook.gerar(ebook, parametrosCotuba.arquivoSaida());
+        for(CotubaPlugin plugin: ServiceLoader.load(CotubaPlugin.class)){
+            plugin.aposGeracao(ebook);
+        }
 
 
-        geradorEbook.gerar(ebook,parametrosCotuba.arquivoSaida());
     }
 }
