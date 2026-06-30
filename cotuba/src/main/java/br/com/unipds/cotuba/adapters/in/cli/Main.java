@@ -1,9 +1,5 @@
 package br.com.unipds.cotuba.adapters.in.cli;
 
-
-
-
-
 import br.com.unipds.cotuba.dto.ParametrosCotuba;
 import br.com.unipds.cotuba.ports.in.CotubaUseCase;
 import jakarta.enterprise.inject.se.SeContainer;

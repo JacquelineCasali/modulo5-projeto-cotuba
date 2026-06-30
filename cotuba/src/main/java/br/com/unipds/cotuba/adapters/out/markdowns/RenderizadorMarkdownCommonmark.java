@@ -3,7 +3,7 @@ package br.com.unipds.cotuba.adapters.out.markdowns;
 import br.com.unipds.cotuba.domain.Capitulo;
 import br.com.unipds.cotuba.domain.CapituloBuilder;
 import br.com.unipds.cotuba.domain.Makdown;
-import br.com.unipds.cotuba.plugin.CotubaPlugin;
+import br.com.unipds.cotuba.plugin.CotubaPluginAposRenderizacao;
 import br.com.unipds.cotuba.ports.out.RenderizadorMarkdown;
 
 
@@ -56,7 +56,7 @@ public class RenderizadorMarkdownCommonmark implements RenderizadorMarkdown {
                 String html = renderer.render(document);
                 //plugin
 
-                for (CotubaPlugin plugin : ServiceLoader.load(CotubaPlugin.class)) {
+                for (CotubaPluginAposRenderizacao plugin : ServiceLoader.load(CotubaPluginAposRenderizacao.class)) {
                     String htmlProcessado = plugin.aposRenderizacao(html);
                     if (htmlProcessado != null && !htmlProcessado.isBlank()) {
                         html = htmlProcessado;

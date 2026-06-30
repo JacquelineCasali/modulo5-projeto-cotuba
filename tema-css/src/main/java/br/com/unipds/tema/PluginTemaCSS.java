@@ -1,10 +1,9 @@
 package br.com.unipds.tema;
 
 
-import br.com.unipds.cotuba.domain.Ebook;
-import br.com.unipds.cotuba.plugin.CotubaPlugin;
+import br.com.unipds.cotuba.plugin.CotubaPluginAposRenderizacao;
 
-public class PluginTemaCSS implements CotubaPlugin {
+public class PluginTemaCSS implements CotubaPluginAposRenderizacao {
     public String aposRenderizacao(String html) {
         return """
                 <style>
@@ -23,8 +22,5 @@ public class PluginTemaCSS implements CotubaPlugin {
                 %s
                 """.formatted(html);
     }
-    @Override
-    public void aposGeracao(Ebook ebook) {
 
-    }
 }
